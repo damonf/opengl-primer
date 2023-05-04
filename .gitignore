@@ -1,0 +1,7 @@
+# Ignore the build dir
+build/
+
+compile_commands.json
+
+# gdb
+.gdb_history
