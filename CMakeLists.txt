@@ -40,6 +40,9 @@ set(CMAKE_CXX_CLANG_TIDY
 set(INCLUDE_BASE
     "${PROJECT_SOURCE_DIR}/include")
 
+set(RESOURCE_BASE
+    "${PROJECT_SOURCE_DIR}/resources")
+
 add_subdirectory(apps)
 add_subdirectory(src)
 #add_subdirectory(tests)

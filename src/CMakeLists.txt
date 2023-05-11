@@ -6,3 +6,8 @@ include_directories(
   ${INCLUDE_BASE}
   )
 
+add_custom_command(
+    TARGET primer
+    POST_BUILD
+    COMMAND cp ${RESOURCE_BASE}/container.jpg ${CMAKE_BINARY_DIR}/apps/
+    )

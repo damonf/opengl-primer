@@ -5,6 +5,7 @@
 #include "fragment_shader.h"
 #include "shader.h"
 #include "shader_program.h"
+#include "texture.h"
 
 #include <iostream>
 #include <array>
@@ -64,11 +65,11 @@ int primer_main()
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-    std::array<float, 18> vertices = {
-        // positions         // colors
-         0.5F, -0.5F, 0.0F,  1.0F, 0.0F, 0.0F,  // bottom right
-        -0.5F, -0.5F, 0.0F,  0.0F, 1.0F, 0.0F,  // bottom left
-         0.0F,  0.5F, 0.0F,  0.0F, 0.0F, 1.0F   // top 
+    std::array<float, 24> vertices = {
+        // positions         // colors          // texture coords
+         0.5F, -0.5F, 0.0F,  1.0F, 0.0F, 0.0F,  1.0F, 0.0F,     // bottom right
+        -0.5F, -0.5F, 0.0F,  0.0F, 1.0F, 0.0F,  0.0F, 0.0F,     // bottom left
+         0.0F,  0.5F, 0.0F,  0.0F, 0.0F, 1.0F,  0.5F, 1.0F,     // top 
     };
 
     unsigned int VBO = 0;
@@ -83,17 +84,31 @@ int primer_main()
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices.data(), GL_STATIC_DRAW);
 
     // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)nullptr);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float)
+            , (void*)nullptr);
     glEnableVertexAttribArray(0);
+
     // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float)
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float)
             , (void *)(3 * sizeof(float)) //NOLINT
             );
     glEnableVertexAttribArray(1);
 
+    // texture attribute
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float)
+            , (void *)(6 * sizeof(float)) //NOLINT
+            );
+    glEnableVertexAttribArray(2);
+
     // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     // glBindVertexArray(0);
+
+    const Texture texture{"container.jpg"};
+
+    shader_program.use(); // don't forget to activate/use the shader before setting uniforms! 
+
+    glUniform1i(glGetUniformLocation(shader_program.id(), "texture1"), 0);
 
     // render loop
     // -----------
@@ -107,6 +122,9 @@ int primer_main()
         // ------
         glClearColor(0.2F, 0.3F, 0.3F, 1.0F);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture.get_id());
 
         // render the triangle
         shader_program.use();

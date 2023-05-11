@@ -1,11 +1,13 @@
 target_sources(primer
     PRIVATE
-      glad.c
       primer.cpp
       shader_program.cpp
+      texture.cpp
+      stb_image.cpp
 )
 
 add_subdirectory(shaders)
+add_subdirectory(third_party)
 
 find_package(OpenGL REQUIRED)
 
@@ -28,4 +30,4 @@ target_link_libraries(primer
   OpenGL::GL
   )
 
-message(STATUS "all_libs = ${all_libs}")
+#message(STATUS "all_libs = ${all_libs}")
