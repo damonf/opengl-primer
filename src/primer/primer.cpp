@@ -1,5 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "vertex_shader.h"
 #include "fragment_shader.h"
@@ -126,8 +129,17 @@ int primer_main()
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture.get_id());
 
-        // render the triangle
+        // create transformations
+        glm::mat4 transform = glm::mat4(1.0F); // make sure to initialize matrix to identity matrix first
+        transform = glm::translate(transform, glm::vec3(0.5F, -0.5F, 0.0F));
+        transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0F, 0.0F, 1.0F));
+
+        // get matrix's uniform location and set matrix
         shader_program.use();
+        const GLint transform_loc = shader_program.get_uniform_location("transform");
+        glUniformMatrix4fv(transform_loc, 1, GL_FALSE, glm::value_ptr(transform));
+
+        // render the triangle
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 

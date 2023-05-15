@@ -28,8 +28,7 @@ class ShaderProgram
 
         [[nodiscard]] GLuint id() const { return id_; }
         void use() const;
-
-        void set_uniform(const std::string &name, float value) const;
+        [[nodiscard]] GLint get_uniform_location(const std::string& name) const;
 
     private:
         static void check_compile_errors(GLuint shader);
