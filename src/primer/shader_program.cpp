@@ -43,7 +43,7 @@ void ShaderProgram::use() const {
 
 GLint ShaderProgram::get_uniform_location(const std::string& name) const {
 
-    const GLint loc = glGetUniformLocation(id_, "transform");
+    const GLint loc = glGetUniformLocation(id_, name.c_str());
 
     if (loc == -1) {
         throw std::runtime_error{name + " not a valid uniform variable"};

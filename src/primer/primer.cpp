@@ -53,12 +53,17 @@ int primer_main()
         return -1;
     }
 
+    // configure global opengl state
+    // -----------------------------
+    glEnable(GL_DEPTH_TEST);
+
     // build and compile our shader program
     // ------------------------------------
     Shader<GL_VERTEX_SHADER> vertex_shader{
         (const unsigned char*)VERTEX_SHADER
       , sizeof(VERTEX_SHADER)
     };
+
     Shader<GL_FRAGMENT_SHADER> fragment_shader{
         (const unsigned char*)FRAGMENT_SHADER
       , sizeof(FRAGMENT_SHADER)
@@ -66,13 +71,51 @@ int primer_main()
 
     const ShaderProgram shader_program{vertex_shader, fragment_shader};
 
-    // set up vertex data (and buffer(s)) and configure vertex attributes
-    // ------------------------------------------------------------------
-    std::array<float, 24> vertices = {
-        // positions         // colors          // texture coords
-         0.5F, -0.5F, 0.0F,  1.0F, 0.0F, 0.0F,  1.0F, 0.0F,     // bottom right
-        -0.5F, -0.5F, 0.0F,  0.0F, 1.0F, 0.0F,  0.0F, 0.0F,     // bottom left
-         0.0F,  0.5F, 0.0F,  0.0F, 0.0F, 1.0F,  0.5F, 1.0F,     // top 
+    // A cube, 36 vertices (6 faces * 2 triangles * 3 vertices each)
+    std::array<float, 288> vertices = {
+
+        // positions           // colors           // texture coords
+        -0.5F, -0.5F, -0.5F,   1.0F, 0.0F, 0.0F,   0.0F, 0.0F,
+         0.5F, -0.5F, -0.5F,   0.0F, 1.0F, 0.0F,   1.0F, 0.0F,
+         0.5F,  0.5F, -0.5F,   0.0F, 0.0F, 1.0F,   1.0F, 1.0F,
+         0.5F,  0.5F, -0.5F,   1.0F, 0.0F, 0.0F,   1.0F, 1.0F,
+        -0.5F,  0.5F, -0.5F,   0.0F, 1.0F, 0.0F,   0.0F, 1.0F,
+        -0.5F, -0.5F, -0.5F,   0.0F, 0.0F, 1.0F,   0.0F, 0.0F,
+
+        -0.5F, -0.5F,  0.5F,   1.0F, 0.0F, 0.0F,   0.0F, 0.0F,
+         0.5F, -0.5F,  0.5F,   0.0F, 1.0F, 0.0F,   1.0F, 0.0F,
+         0.5F,  0.5F,  0.5F,   0.0F, 0.0F, 1.0F,   1.0F, 1.0F,
+         0.5F,  0.5F,  0.5F,   1.0F, 0.0F, 0.0F,   1.0F, 1.0F,
+        -0.5F,  0.5F,  0.5F,   0.0F, 1.0F, 0.0F,   0.0F, 1.0F,
+        -0.5F, -0.5F,  0.5F,   0.0F, 0.0F, 1.0F,   0.0F, 0.0F,
+
+        -0.5F,  0.5F,  0.5F,   1.0F, 0.0F, 0.0F,   1.0F, 0.0F,
+        -0.5F,  0.5F, -0.5F,   0.0F, 1.0F, 0.0F,   1.0F, 1.0F,
+        -0.5F, -0.5F, -0.5F,   0.0F, 0.0F, 1.0F,   0.0F, 1.0F,
+        -0.5F, -0.5F, -0.5F,   1.0F, 0.0F, 0.0F,   0.0F, 1.0F,
+        -0.5F, -0.5F,  0.5F,   0.0F, 1.0F, 0.0F,   0.0F, 0.0F,
+        -0.5F,  0.5F,  0.5F,   0.0F, 0.0F, 1.0F,   1.0F, 0.0F,
+
+         0.5F,  0.5F,  0.5F,   1.0F, 0.0F, 0.0F,   1.0F, 0.0F,
+         0.5F,  0.5F, -0.5F,   0.0F, 1.0F, 0.0F,   1.0F, 1.0F,
+         0.5F, -0.5F, -0.5F,   0.0F, 0.0F, 1.0F,   0.0F, 1.0F,
+         0.5F, -0.5F, -0.5F,   1.0F, 0.0F, 0.0F,   0.0F, 1.0F,
+         0.5F, -0.5F,  0.5F,   0.0F, 1.0F, 0.0F,   0.0F, 0.0F,
+         0.5F,  0.5F,  0.5F,   0.0F, 0.0F, 1.0F,   1.0F, 0.0F,
+
+        -0.5F, -0.5F, -0.5F,   1.0F, 0.0F, 0.0F,   0.0F, 1.0F,
+         0.5F, -0.5F, -0.5F,   0.0F, 1.0F, 0.0F,   1.0F, 1.0F,
+         0.5F, -0.5F,  0.5F,   0.0F, 0.0F, 1.0F,   1.0F, 0.0F,
+         0.5F, -0.5F,  0.5F,   1.0F, 0.0F, 0.0F,   1.0F, 0.0F,
+        -0.5F, -0.5F,  0.5F,   0.0F, 1.0F, 0.0F,   0.0F, 0.0F,
+        -0.5F, -0.5F, -0.5F,   0.0F, 0.0F, 1.0F,   0.0F, 1.0F,
+
+        -0.5F,  0.5F, -0.5F,   1.0F, 0.0F, 0.0F,   0.0F, 1.0F,
+         0.5F,  0.5F, -0.5F,   0.0F, 1.0F, 0.0F,   1.0F, 1.0F,
+         0.5F,  0.5F,  0.5F,   0.0F, 0.0F, 1.0F,   1.0F, 0.0F,
+         0.5F,  0.5F,  0.5F,   1.0F, 0.0F, 0.0F,   1.0F, 0.0F,
+        -0.5F,  0.5F,  0.5F,   0.0F, 1.0F, 0.0F,   0.0F, 0.0F,
+        -0.5F,  0.5F, -0.5F,   0.0F, 0.0F, 1.0F,   0.0F, 1.0F
     };
 
     unsigned int VBO = 0;
@@ -111,7 +154,10 @@ int primer_main()
 
     shader_program.use(); // don't forget to activate/use the shader before setting uniforms! 
 
-    glUniform1i(glGetUniformLocation(shader_program.id(), "texture1"), 0);
+    glUniform1i(
+            shader_program.get_uniform_location("texture1")
+            , 0
+            );
 
     // render loop
     // -----------
@@ -124,24 +170,47 @@ int primer_main()
         // render
         // ------
         glClearColor(0.2F, 0.3F, 0.3F, 1.0F);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the depth buffer now!
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture.get_id());
 
-        // create transformations
-        glm::mat4 transform = glm::mat4(1.0F); // make sure to initialize matrix to identity matrix first
-        transform = glm::translate(transform, glm::vec3(0.5F, -0.5F, 0.0F));
-        transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0F, 0.0F, 1.0F));
-
-        // get matrix's uniform location and set matrix
         shader_program.use();
-        const GLint transform_loc = shader_program.get_uniform_location("transform");
-        glUniformMatrix4fv(transform_loc, 1, GL_FALSE, glm::value_ptr(transform));
+
+        // create transformations
+        glm::mat4 model      = glm::mat4(1.0F); // make sure to initialize matrix to identity matrix first
+        glm::mat4 view       = glm::mat4(1.0F);
+        glm::mat4 projection = glm::mat4(1.0F);
+
+        model      = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0F), glm::vec3(0.5F, 1.0F, 0.0F));
+        view       = glm::translate(view, glm::vec3(0.0F, 0.0F, -3.0F));
+        projection = glm::perspective(glm::radians(45.0F), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1F, 100.0F);
+
+        // Set uniforms
+        glUniformMatrix4fv(
+                shader_program.get_uniform_location("model")
+                , 1
+                , GL_FALSE
+                , glm::value_ptr(model)
+                );
+
+        glUniformMatrix4fv(
+                shader_program.get_uniform_location("view")
+                , 1
+                , GL_FALSE
+                , glm::value_ptr(view)
+                );
+
+        glUniformMatrix4fv(
+                shader_program.get_uniform_location("projection")
+                , 1
+                , GL_FALSE
+                , glm::value_ptr(projection)
+                );
 
         // render the triangle
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
