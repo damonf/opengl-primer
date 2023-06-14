@@ -9,10 +9,10 @@ add_executable(primer-app
 
 #find_package(Boost 1.79 COMPONENTS program_options REQUIRED)
 
-#include_directories(
-  #SYSTEM
-  #${INCLUDE_BASE}
-  #)
+include_directories(
+  SYSTEM
+  ${INCLUDE_BASE}
+  )
 
 target_link_libraries(primer-app PRIVATE primer)
 

@@ -1,9 +1,14 @@
 target_sources(primer
     PRIVATE
+      build_primer.cpp
       primer.cpp
       shader_program.cpp
       texture.cpp
       stb_image.cpp
+      camera.cpp
+      vertex_binding.cpp
+      glfw.cpp
+      glfw_window.cpp
 )
 
 add_subdirectory(shaders)

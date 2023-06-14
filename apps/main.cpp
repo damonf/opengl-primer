@@ -1,4 +1,4 @@
-#include "primer.h"
+#include "build_primer.h"
 
 #include <iostream>
 #include <stdexcept>
@@ -6,13 +6,13 @@
 int main() {
 
     try {
-        primer_main();
+        auto primer = primer::build_primer();
+        primer.run();
     }
     catch (const std::exception& e) {
         std::cerr << e.what();
         return EXIT_FAILURE;
     }
 
-    //return EXIT_SUCCESS;
-    return 0;
+    return EXIT_SUCCESS;
 }
