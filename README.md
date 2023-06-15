@@ -1,5 +1,11 @@
 # OpenGL Primer 
-OpenGL demo program based on the [Learn OpenGL tutorial](https://learnopengl.com/Introduction).
+A C++17 CMake OpenGL demo program using **GLAD**, **GLFW** and **glm**.
 
-![cube](https://github.com/damonf/opengl-primer/assets/850632/2eb3d262-313e-4027-bbd5-f50231a62291)
+Based on the [Learn OpenGL tutorial](https://learnopengl.com/Introduction).
+
+## Demo
+
+
+https://github.com/damonf/opengl-primer/assets/850632/a028523f-6835-4c41-aeab-612d5b3e04ce
+
 
